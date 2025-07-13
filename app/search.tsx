@@ -1,5 +1,4 @@
 import { ActivityIndicator, FlatList, KeyboardAvoidingView, Platform, Text, View } from "react-native";
-import { useState } from "react";
 
 import { MovieCard } from "@/components/MovieCard";
 import { MovieT } from "@/types";
@@ -8,6 +7,7 @@ import { Searchbar } from "@/components/Searchbar";
 import { searchMovies } from "@/lib/services/movies";
 import { useDebounce } from "@/lib/hooks/useDebounce";
 import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 
 export default function Search() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -53,10 +53,10 @@ export default function Search() {
         )}
       </View>
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior={"padding"}
         keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
       >
-        <View className="px-4 py-2">
+        <View className="px-4">
           <Searchbar value={searchTerm} onChangeText={setSearchTerm} />
         </View>
       </KeyboardAvoidingView>

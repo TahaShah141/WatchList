@@ -4,19 +4,25 @@ import { MovieT } from "@/types";
 import { useRouter } from "expo-router";
 
 type MovieCardProps = {
-  movie: MovieT
-}
+  movie: MovieT;
+  variant?: "grid" | "horizontal";
+};
 
-export const MovieCard = ({ movie }: MovieCardProps) => {
+export const MovieCard = ({ movie, variant = "grid" }: MovieCardProps) => {
   const router = useRouter();
 
+  const containerClasses = variant === "grid" ? "py-2 w-1/3 px-2" : "mr-4";
+  const imageContainerClasses = variant === "grid" ? "rounded-md overflow-hidden" : "rounded-md overflow-hidden w-24 h-36";
+  const imageClasses = variant === "grid" ? "w-full aspect-[2/3]" : "w-full h-full";
+  const placeholderClasses = variant === "grid" ? "w-full aspect-[2/3] bg-neutral-900 justify-center items-center p-1" : "w-full h-full bg-neutral-900 justify-center items-center p-1";
+
   return (
-    <TouchableOpacity onPress={() => router.push(`/movie/${movie.id}`)} className="py-2 w-1/3 px-2">
-      <View className="rounded-md overflow-hidden">
+    <TouchableOpacity onPress={() => router.push(`/movie/${movie.id}`)} className={containerClasses}>
+      <View className={imageContainerClasses}>
         {movie.poster_path ? 
-          <Image source={{ uri: `${process.env.TMDB_IMAGE_BASE_URL}/t/p/w500${movie.poster_path}`}} className="w-full aspect-[2/3]" />
+          <Image source={{ uri: `${process.env.TMDB_IMAGE_BASE_URL}/t/p/w500${movie.poster_path}`}} className={imageClasses} />
           :
-          <View className="w-full aspect-[2/3] bg-neutral-900 justify-center items-center p-1">
+          <View className={placeholderClasses}>
             <View className="items-center">
               <Text className="text-white text-center font-bold text-sm">
                 {movie.title}
@@ -29,5 +35,5 @@ export const MovieCard = ({ movie }: MovieCardProps) => {
         }
       </View>
     </TouchableOpacity>
-  )
-}
+  );
+};

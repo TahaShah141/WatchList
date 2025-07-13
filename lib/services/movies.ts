@@ -26,6 +26,42 @@ export const getPopularMovies = async (): Promise<MovieT[]> => {
   }
 }
 
+export const getUpcomingMovies = async (): Promise<MovieT[]> => {
+  const endpoint = `${process.env.TMDB_BASE_URL}/movie/upcoming`;
+  try {
+    const response = await authFetch(endpoint);
+    const data = await response.json();
+    return data.results || [];
+  } catch (error) {
+    console.error('Error fetching upcoming movies:', error);
+    return [];
+  }
+}
+
+export const getNowPlayingMovies = async (): Promise<MovieT[]> => {
+  const endpoint = `${process.env.TMDB_BASE_URL}/movie/now_playing`;
+  try {
+    const response = await authFetch(endpoint);
+    const data = await response.json();
+    return data.results || [];
+  } catch (error) {
+    console.error('Error fetching now playing movies:', error);
+    return [];
+  }
+}
+
+export const getTopRatedMovies = async (): Promise<MovieT[]> => {
+  const endpoint = `${process.env.TMDB_BASE_URL}/movie/top_rated`;
+  try {
+    const response = await authFetch(endpoint);
+    const data = await response.json();
+    return data.results || [];
+  } catch (error) {
+    console.error('Error fetching top rated movies:', error);
+    return [];
+  }
+}
+
 export const getMovie = async (id: string): Promise<MovieDetailsT | undefined> => {
 
   const endpoint = `${process.env.TMDB_BASE_URL}/movie/${id}`
