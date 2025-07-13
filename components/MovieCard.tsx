@@ -11,8 +11,8 @@ type MovieCardProps = {
 export const MovieCard = ({ movie, variant = "grid" }: MovieCardProps) => {
   const router = useRouter();
 
-  const containerClasses = variant === "grid" ? "py-2 w-1/3 px-2" : "mr-4";
-  const imageContainerClasses = variant === "grid" ? "rounded-md overflow-hidden" : "rounded-md overflow-hidden w-24 h-36";
+  const containerClasses = variant === "grid" ? "p-1.5 w-1/3" : "mr-4";
+  const imageContainerClasses = variant === "grid" ? "rounded-sm overflow-hidden" : "rounded-sm overflow-hidden w-28 h-40";
   const imageClasses = variant === "grid" ? "w-full aspect-[2/3]" : "w-full h-full";
   const placeholderClasses = variant === "grid" ? "w-full aspect-[2/3] bg-neutral-900 justify-center items-center p-1" : "w-full h-full bg-neutral-900 justify-center items-center p-1";
 

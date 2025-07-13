@@ -61,6 +61,7 @@ export default function Index() {
             title="Coming Soon"
             movies={upcomingMovies}
             seeAllHref="/movies/upcoming"
+            iconName="calendar-outline"
           />
         )}
 
@@ -69,6 +70,7 @@ export default function Index() {
             title="Now Playing"
             movies={nowPlayingMovies}
             seeAllHref="/movies/now-playing"
+            iconName="film-outline"
           />
         )}
 
@@ -77,6 +79,7 @@ export default function Index() {
             title="Popular"
             movies={popularMovies}
             seeAllHref="/movies/popular"
+            iconName="flame-outline"
           />
         )}
 
@@ -85,6 +88,7 @@ export default function Index() {
             title="Top Rated"
             movies={topRatedMovies}
             seeAllHref="/movies/top-rated"
+            iconName="star-outline"
           />
         )}
       </ScrollView>

@@ -62,6 +62,30 @@ export const getTopRatedMovies = async (): Promise<MovieT[]> => {
   }
 }
 
+export const getSimilarMovies = async (id: string): Promise<MovieT[]> => {
+  const endpoint = `${process.env.TMDB_BASE_URL}/movie/${id}/similar`;
+  try {
+    const response = await authFetch(endpoint);
+    const data = await response.json();
+    return data.results || [];
+  } catch (error) {
+    console.error('Error fetching similar movies:', error);
+    return [];
+  }
+}
+
+export const getRecommendedMovies = async (id: string): Promise<MovieT[]> => {
+  const endpoint = `${process.env.TMDB_BASE_URL}/movie/${id}/recommendations`;
+  try {
+    const response = await authFetch(endpoint);
+    const data = await response.json();
+    return data.results || [];
+  } catch (error) {
+    console.error('Error fetching recommended movies:', error);
+    return [];
+  }
+}
+
 export const getMovie = async (id: string): Promise<MovieDetailsT | undefined> => {
 
   const endpoint = `${process.env.TMDB_BASE_URL}/movie/${id}`
