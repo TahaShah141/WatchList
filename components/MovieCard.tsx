@@ -14,7 +14,7 @@ export const MovieCard = ({ movie }: MovieCardProps) => {
     <TouchableOpacity onPress={() => router.push(`/movie/${movie.id}`)} className="py-2 w-1/3 px-2">
       <View className="rounded-md overflow-hidden">
         {movie.poster_path ? 
-          <Image source={{ uri: `https://image.tmdb.org/t/p/w500${movie.poster_path}`}} className="w-full aspect-[2/3]" />
+          <Image source={{ uri: `${process.env.TMDB_IMAGE_BASE_URL}/t/p/w500${movie.poster_path}`}} className="w-full aspect-[2/3]" />
           :
           <View className="w-full aspect-[2/3] bg-neutral-900 justify-center items-center p-1">
             <View className="items-center">

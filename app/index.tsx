@@ -4,7 +4,7 @@ import { MovieCard } from "@/components/MovieCard";
 import { MovieT } from "@/types";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Searchbar } from "@/components/Searchbar";
-import { getMovies } from "@/lib/services/movies";
+import { searchMovies } from "@/lib/services/movies";
 import { useDebounce } from "@/lib/hooks/useDebounce";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
@@ -13,8 +13,8 @@ export default function Index() {
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
 
-  const { data: movies, isLoading: isMovieLoading } = useQuery<MovieT[]>({
-    queryFn: () => getMovies(debouncedSearchTerm),
+  const { data: movies, isLoading: fetchingMovies } = useQuery<MovieT[]>({
+    queryFn: () => searchMovies(debouncedSearchTerm),
     queryKey: ["movies", debouncedSearchTerm],
     enabled: !!debouncedSearchTerm,
   });
@@ -22,7 +22,7 @@ export default function Index() {
   return (
     <SafeAreaView className="flex-1 bg-black">
       <View className="flex-1">
-        {isMovieLoading ? (
+        {fetchingMovies ? (
           <View className="flex-1 items-center justify-center">
             <ActivityIndicator />
           </View>
