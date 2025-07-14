@@ -1,13 +1,25 @@
-import { ActivityIndicator, ScrollView, Text, TouchableOpacity, View } from "react-native";
-import { getNowPlayingMovies, getPopularMovies, getTopRatedMovies, getUpcomingMovies } from "@/lib/services/movies";
+import { ActivityIndicator, FlatList, KeyboardAvoidingView, Platform, ScrollView, Text, View } from "react-native";
+import { getNowPlayingMovies, getPopularMovies, getTopRatedMovies, getUpcomingMovies, searchMovies } from "@/lib/services/movies";
+import { useQueries, useQuery } from "@tanstack/react-query";
 
-import { Ionicons } from "@expo/vector-icons";
-import { Link } from "expo-router";
+import { MovieCard } from "@/components/MovieCard";
 import { MovieListSection } from "@/components/MovieListSection";
+import { MovieT } from "@/types";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useQueries } from "@tanstack/react-query";
+import { Searchbar } from "@/components/Searchbar";
+import { useDebounce } from "@/lib/hooks/useDebounce";
+import { useState } from "react";
 
 export default function Index() {
+  const [searchTerm, setSearchTerm] = useState("");
+  const debouncedSearchTerm = useDebounce(searchTerm, 500);
+
+  const { data: searchedMovies, isLoading: isSearchedMoviesLoading } = useQuery<MovieT[]>({
+    queryFn: () => searchMovies(debouncedSearchTerm),
+    queryKey: ["searchedMovies", debouncedSearchTerm],
+    enabled: !!debouncedSearchTerm,
+  });
+
   const [
     { data: upcomingMovies, isLoading: isUpcomingMoviesLoading },
     { data: nowPlayingMovies, isLoading: isNowPlayingMoviesLoading },
@@ -36,7 +48,7 @@ export default function Index() {
 
   const isLoading = isUpcomingMoviesLoading || isNowPlayingMoviesLoading || isPopularMoviesLoading || isTopRatedMoviesLoading;
 
-  if (isLoading) {
+  if (isLoading && !debouncedSearchTerm) {
     return (
       <View className="flex-1 justify-center items-center bg-black">
         <ActivityIndicator />
@@ -46,52 +58,85 @@ export default function Index() {
 
   return (
     <SafeAreaView className="flex-1 bg-black">
-      <ScrollView className="flex-1">
+      <View className="flex-1">
         <View className="flex-row justify-between items-center mx-4 my-4">
           <Text className="text-white text-3xl font-bold">WatchList</Text>
-          <Link href="/search" asChild>
-            <TouchableOpacity>
-              <Ionicons name="search" size={28} color="white" />
-            </TouchableOpacity>
-          </Link>
         </View>
 
-        {upcomingMovies && upcomingMovies.length > 0 && (
-          <MovieListSection
-            title="Coming Soon"
-            movies={upcomingMovies}
-            seeAllHref="/movies/upcoming"
-            iconName="calendar-outline"
-          />
-        )}
+        {debouncedSearchTerm ? (
+          isSearchedMoviesLoading ? (
+            <View className="flex-1 items-center justify-center">
+              <ActivityIndicator />
+            </View>
+          ) : searchedMovies && searchedMovies.length > 0 ? (
+            <>
+              <Text className="text-white text-xl font-bold mx-4 mb-2">Search Results for "{debouncedSearchTerm}"</Text>
+              <FlatList
+                data={searchedMovies}
+                renderItem={({ item }) => <MovieCard movie={item} />}
+                keyExtractor={({ id }) => `${id}`}
+                numColumns={3}
+                contentContainerClassName="py-4 px-4"
+              />
+            </>
+          ) : (
+            <View className="flex-1 items-center justify-center px-4">
+              <Text className="text-white text-lg text-center">
+                No movies found for "{debouncedSearchTerm}"
+              </Text>
+              <Text className="text-neutral-400 mt-2 text-center">
+                Try searching for something else.
+              </Text>
+            </View>
+          )
+        ) : (
+          <ScrollView className="flex-1">
+            {upcomingMovies && upcomingMovies.length > 0 && (
+              <MovieListSection
+                title="Coming Soon"
+                movies={upcomingMovies}
+                seeAllHref="/movies/upcoming"
+                iconName="calendar-outline"
+              />
+            )}
 
-        {nowPlayingMovies && nowPlayingMovies.length > 0 && (
-          <MovieListSection
-            title="Now Playing"
-            movies={nowPlayingMovies}
-            seeAllHref="/movies/now-playing"
-            iconName="film-outline"
-          />
-        )}
+            {nowPlayingMovies && nowPlayingMovies.length > 0 && (
+              <MovieListSection
+                title="Now Playing"
+                movies={nowPlayingMovies}
+                seeAllHref="/movies/now-playing"
+                iconName="film-outline"
+              />
+            )}
 
-        {popularMovies && popularMovies.length > 0 && (
-          <MovieListSection
-            title="Popular"
-            movies={popularMovies}
-            seeAllHref="/movies/popular"
-            iconName="flame-outline"
-          />
-        )}
+            {popularMovies && popularMovies.length > 0 && (
+              <MovieListSection
+                title="Popular"
+                movies={popularMovies}
+                seeAllHref="/movies/popular"
+                iconName="flame-outline"
+              />
+            )}
 
-        {topRatedMovies && topRatedMovies.length > 0 && (
-          <MovieListSection
-            title="Top Rated"
-            movies={topRatedMovies}
-            seeAllHref="/movies/top-rated"
-            iconName="star-outline"
-          />
+            {topRatedMovies && topRatedMovies.length > 0 && (
+              <MovieListSection
+                title="Top Rated"
+                movies={topRatedMovies}
+                seeAllHref="/movies/top-rated"
+                iconName="star-outline"
+              />
+            )}
+          </ScrollView>
         )}
-      </ScrollView>
+      </View>
+      <KeyboardAvoidingView
+        behavior={"padding"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 90 : 0}
+      >
+        <View className="px-4">
+          <Searchbar value={searchTerm} onChangeText={setSearchTerm} />
+        </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
